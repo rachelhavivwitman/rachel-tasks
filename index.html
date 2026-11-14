@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>המשימות של רחל</title>
+  <meta name="description" content="דשבורד משימות אישי, חכם, חסכוני בטוקנים ומסונכרן לגוגל שיטס">
+  <meta name="theme-color" content="#1e3a8a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="המשימות של רחל">
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231e3a8a'/><path d='M30 50 L45 65 L72 32' stroke='white' stroke-width='10' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231e3a8a'/><path d='M30 50 L45 65 L72 32' stroke='white' stroke-width='10' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+
+  <!-- Google Fonts - Heebo & Assistant -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Assistant', 'Heebo', 'system-ui', 'sans-serif'],
+            heading: ['Heebo', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+              950: '#172554',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen antialiased flex flex-col selection:bg-blue-100">
+
+  <!-- Top Navigation & Sync Header -->
+  <header class="bg-brand-900 text-white shadow-md sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight font-heading flex items-center gap-2">
+          <span>המשימות של רחל</span>
+          <span class="text-xs font-normal bg-brand-800 text-blue-200 px-2 py-0.5 rounded-full border border-blue-400/20">עצמאי · 0 טוקנים</span>
+        </h1>
+        <div class="flex items-center gap-3 text-xs md:text-sm text-blue-200 mt-0.5">
+          <span id="currentDateDisplay">טוען תאריך...</span>
+          <span>•</span>
+          <span id="lastUpdatedDisplay">מעודכן עכשיו</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Sync Status Button -->
+        <button id="syncBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium bg-brand-800 hover:bg-brand-700 transition border border-blue-400/30 text-blue-100" title="סנכרן עם Google Sheets">
+          <span id="syncIndicator" class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+          <span id="syncStatusText">גוגל שיטס: מוכן</span>
+          <svg class="w-4 h-4 ml-0.5 text-blue-200 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+        </button>
+
+        <!-- Settings Button -->
+        <button id="openSettingsBtn" class="p-2 rounded-lg bg-brand-800 hover:bg-brand-700 text-blue-100 border border-blue-400/30 transition" title="הגדרות סנכרון">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-5xl w-full mx-auto px-3 sm:px-4 py-5 flex-1 space-y-6">
+
+    <!-- Input Card (Exact styling from screenshot 1) -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 sm:p-5 transition hover:shadow-md">
+      <div class="flex items-center justify-between mb-2">
+        <label for="quickInput" class="font-bold text-slate-800 text-base sm:text-lg flex items-center gap-2">
+          <span>משימה חדשה: כתבי או הקליטי בחופשיות, ואני אסדר</span>
+        </label>
+        <span id="recordingBadge" class="hidden text-xs bg-red-100 text-red-700 font-bold px-2.5 py-1 rounded-full animate-pulse flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-red-600 inline-block"></span>
+          מקליט עכשיו...
+        </span>
+      </div>
+
+      <!-- Quick Task Textarea -->
+      <div class="relative">
+        <textarea 
+          id="quickInput" 
+          rows="3" 
+          class="w-full rounded-xl border border-slate-300 p-3.5 text-slate-800 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition text-sm sm:text-base resize-y placeholder:text-slate-400"
+          placeholder="למשל: להחזיר לנטע ויגל משוב על ההשערות עד יום ראשון, דחוף"
+        ></textarea>
+      </div>
+
+      <!-- Action Buttons Row -->
+      <div class="mt-3 flex flex-wrap items-center justify-between gap-2.5">
+        <div class="flex items-center flex-wrap gap-2">
+          <!-- Add & Organize Button -->
+          <button id="smartAddBtn" class="bg-brand-900 hover:bg-brand-950 text-white font-bold px-5 py-2.5 rounded-xl shadow transition flex items-center gap-2 text-sm sm:text-base active:scale-95">
+            <span>הוספה וסידור</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          </button>
+
+          <!-- Voice Record Button -->
+          <button id="voiceBtn" class="bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2.5 rounded-xl border border-slate-300 transition flex items-center gap-2 text-sm active:scale-95">
+            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+            <span id="voiceBtnText">הקלטה</span>
+          </button>
+
+          <!-- Manual Fill Button -->
+          <button id="openManualBtn" class="bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2.5 rounded-xl border border-slate-300 transition flex items-center gap-1.5 text-sm active:scale-95">
+            <span>מילוי ידני</span>
+          </button>
+
+          <!-- Batch Add Button (Super Token-Saving) -->
+          <button id="openBatchBtn" class="bg-blue-50 hover:bg-blue-100 text-brand-900 font-semibold px-3 py-2.5 rounded-xl border border-blue-200 transition flex items-center gap-1.5 text-xs sm:text-sm active:scale-95" title="הדבקת כמה משימות יחד לחיסכון">
+            <svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            <span>הוספה מרוכזת (Batch)</span>
+          </button>
+        </div>
+
+        <p class="text-xs text-slate-500 w-full sm:w-auto text-center sm:text-left">
+          אפשר גם להוסיף ישירות מקלוד או מוואטסאפ ללא שריפת טוקנים
+        </p>
+      </div>
+    </section>
+
+    <!-- Urgency Summary Cards (Screenshot 1 Counters) -->
+    <section class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-3">
+      <!-- דחוף -->
+      <button data-filter-urgency="דחוף" class="urgency-card bg-[#fef2f2] hover:bg-red-100/80 border border-red-200/90 rounded-2xl p-3 text-center transition shadow-sm hover:shadow flex flex-col items-center justify-center">
+        <span id="countUrgent" class="text-2xl sm:text-3xl font-black text-[#dc2626] font-heading">0</span>
+        <span class="text-xs sm:text-sm font-bold text-red-700 mt-0.5">דחוף</span>
+      </button>
+
+      <!-- גבוה -->
+      <button data-filter-urgency="גבוה" class="urgency-card bg-[#fffbeb] hover:bg-amber-100/80 border border-amber-200/90 rounded-2xl p-3 text-center transition shadow-sm hover:shadow flex flex-col items-center justify-center">
+        <span id="countHigh" class="text-2xl sm:text-3xl font-black text-[#d97706] font-heading">0</span>
+        <span class="text-xs sm:text-sm font-bold text-amber-800 mt-0.5">גבוה</span>
+      </button>
+
+      <!-- רגיל -->
+      <button data-filter-urgency="רגיל" class="urgency-card bg-[#fefce8] hover:bg-yellow-100/80 border border-yellow-200/90 rounded-2xl p-3 text-center transition shadow-sm hover:shadow flex flex-col items-center justify-center">
+        <span id="countNormal" class="text-2xl sm:text-3xl font-black text-[#ca8a04] font-heading">0</span>
+        <span class="text-xs sm:text-sm font-bold text-yellow-800 mt-0.5">רגיל</span>
+      </button>
+
+      <!-- נמוך -->
+      <button data-filter-urgency="נמוך" class="urgency-card bg-[#f0fdf4] hover:bg-emerald-100/80 border border-emerald-200/90 rounded-2xl p-3 text-center transition shadow-sm hover:shadow flex flex-col items-center justify-center">
+        <span id="countLow" class="text-2xl sm:text-3xl font-black text-[#16a34a] font-heading">0</span>
+        <span class="text-xs sm:text-sm font-bold text-emerald-800 mt-0.5">נמוך</span>
+      </button>
+
+      <!-- במעקב -->
+      <button data-filter-urgency="במעקב" class="urgency-card col-span-2 sm:col-span-1 bg-[#faf5ff] hover:bg-purple-100/80 border border-purple-200/90 rounded-2xl p-3 text-center transition shadow-sm hover:shadow flex flex-col items-center justify-center">
+        <span id="countTracking" class="text-2xl sm:text-3xl font-black text-[#7e22ce] font-heading">0</span>
+        <div class="flex items-center gap-1 mt-0.5">
+          <span class="text-xs sm:text-sm font-bold text-purple-900">במעקב</span>
+          <span id="countNeedCheckBadge" class="text-[11px] bg-purple-200 text-purple-800 font-semibold px-1.5 py-0.2 rounded-full">0 לבדוק</span>
+        </div>
+      </button>
+    </section>
+
+    <!-- Sorting & Category Filter Pills -->
+    <section class="space-y-3">
+      <!-- Sort Controls Bar -->
+      <div class="flex items-center justify-between flex-wrap gap-2 pt-1 border-t border-slate-200/60">
+        <div class="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-700">
+          <span>סידור:</span>
+          <div class="inline-flex rounded-xl bg-slate-200 p-0.5">
+            <button id="sortUrgencyBtn" class="sort-toggle-btn active-sort px-3 py-1 text-xs sm:text-sm font-bold rounded-lg transition">לפי דחיפות</button>
+            <button id="sortCategoryBtn" class="sort-toggle-btn px-3 py-1 text-xs sm:text-sm font-medium rounded-lg text-slate-600 hover:text-slate-900 transition">לפי נושא</button>
+            <button id="sortDateBtn" class="sort-toggle-btn px-3 py-1 text-xs sm:text-sm font-medium rounded-lg text-slate-600 hover:text-slate-900 transition">לפי תאריך</button>
+          </div>
+        </div>
+
+        <!-- Search & Filter Clear -->
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <input 
+              type="text" 
+              id="searchInput" 
+              placeholder="חיפוש משימה..." 
+              class="w-36 sm:w-56 text-xs sm:text-sm rounded-xl border border-slate-300 py-1.5 pr-8 pl-3 bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+            >
+            <svg class="w-4 h-4 text-slate-400 absolute right-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+
+          <button id="clearFiltersBtn" class="hidden text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium px-2.5 py-1.5 rounded-lg transition">
+            נקה סינון ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Categories Filter Badges (Scrollable horizontally on mobile, wrapping on desktop) -->
+      <div id="categoryPillsContainer" class="flex items-center gap-1.5 flex-wrap overflow-x-auto pb-1 text-xs sm:text-sm">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </section>
+
+    <!-- Task List Section -->
+    <section id="tasksContainer" class="space-y-4">
+      <!-- Loading Skeleton or empty placeholder -->
+      <div id="loadingState" class="text-center py-12 text-slate-400">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand-900 border-t-transparent"></div>
+        <p class="mt-2 text-sm">טוען את המשימות...</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200/80 mt-10 py-4 text-center text-xs text-slate-500">
+    <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div>המשימות של רחל · מערכת עצמאית מנותקת טוקנים · נתונים מגובים ב-Google Sheets</div>
+      <div class="flex items-center gap-3">
+        <button id="exportJsonBtn" class="hover:text-brand-900 transition underline">גיבוי JSON</button>
+        <span>•</span>
+        <button id="pwaInstallFooterBtn" class="hover:text-brand-900 transition underline">התקן למסך הבית</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Modal 1: Manual Add / Edit Task Modal -->
+  <div id="taskModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-4 border border-slate-100">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 id="modalTitle" class="text-lg font-bold text-slate-900">משימה חדשה</h3>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 text-xl font-bold p-1">✕</button>
+      </div>
+
+      <form id="taskForm" class="space-y-4">
+        <input type="hidden" id="editTaskId">
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">כותרת המשימה *</label>
+          <input type="text" id="taskTitleInput" required class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="מה צריך לעשות?">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">נושא / קטגוריה</label>
+            <select id="taskCategorySelect" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+              <!-- populated dynamically -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">רמת דחיפות</label>
+            <select id="taskPrioritySelect" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+              <option value="דחוף">דחוף</option>
+              <option value="גבוה">גבוה</option>
+              <option value="רגיל" selected>רגיל</option>
+              <option value="נמוך">נמוך</option>
+              <option value="במעקב">במעקב</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Follow-up Tracking Fields -->
+        <div class="bg-purple-50/70 border border-purple-200/80 rounded-xl p-3 space-y-3">
+          <div class="font-bold text-xs text-purple-900 flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span>מעקב והמתנה לתשובה (אופציונלי)</span>
+          </div>
+          <div>
+            <label class="block text-xs text-purple-800 mb-1">מחכה ל... (למשל: תשובה מהמארגנים, אישור ועדה):</label>
+            <input type="text" id="taskWaitingForInput" class="w-full rounded-lg border border-purple-200 p-2 text-xs focus:ring-1 focus:ring-purple-500 outline-none bg-white" placeholder="ממי ועל מה מחכים?">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs text-purple-800 mb-1">תאריך לבדיקה חוזרת:</label>
+              <input type="date" id="taskCheckDateInput" class="w-full rounded-lg border border-purple-200 p-2 text-xs focus:ring-1 focus:ring-purple-500 outline-none bg-white">
+            </div>
+            <div>
+              <label class="block text-xs text-purple-800 mb-1">תאריך יעד סופי:</label>
+              <input type="date" id="taskDueDateInput" class="w-full rounded-lg border border-purple-200 p-2 text-xs focus:ring-1 focus:ring-purple-500 outline-none bg-white">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">פירוט, קישורים והערות</label>
+          <textarea id="taskNotesInput" rows="3" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="קישורים, הנחיות תשלום, טלפונים וכו'..."></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t">
+          <button type="button" class="modal-close-btn px-4 py-2 text-slate-600 text-sm font-semibold hover:bg-slate-100 rounded-xl transition">ביטול</button>
+          <button type="submit" class="bg-brand-900 hover:bg-brand-950 text-white font-bold px-5 py-2 text-sm rounded-xl shadow transition">שמירת משימה</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Batch Add Tasks Modal (Paste multiple tasks from Claude/WhatsApp) -->
+  <div id="batchModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 sm:p-6 space-y-4 border border-slate-100">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">הוספה מרוכזת (Batch)</h3>
+          <p class="text-xs text-slate-500 mt-0.5">הדביקי רשימת משימות מקלוד, מוואטסאפ או מהראש – כל שורה תהפוך למשימה נפרדת!</p>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 text-xl font-bold p-1">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <textarea 
+          id="batchTextarea" 
+          rows="7" 
+          class="w-full rounded-xl border border-slate-300 p-3 text-sm focus:ring-2 focus:ring-brand-500 outline-none" 
+          placeholder="לדוגמה:
+- להגיש דו״ח תקציב עד יום שלישי, דחוף
+- לשלוח מייל לדיקן לגבי סילבוס
+- לתאם פגישה עם רונית
+- כנס IOBC: לבדוק אם אושר הסבסוד"></textarea>
+
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-brand-900 flex items-start gap-2">
+          <svg class="w-4 h-4 text-brand-700 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <div>
+            <strong>סופר חסכוני בטוקנים:</strong> המערכת מסווגת דחיפות ונושאים אוטומטית בצד הלקוח ללא שום עלות וללא צורך ב-AI עבור פעולת הפירוק!
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t">
+        <button type="button" class="modal-close-btn px-4 py-2 text-slate-600 text-sm font-semibold hover:bg-slate-100 rounded-xl transition">ביטול</button>
+        <button id="submitBatchBtn" class="bg-brand-900 hover:bg-brand-950 text-white font-bold px-5 py-2 text-sm rounded-xl shadow transition">הוסף את כל המשימות</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Settings & Google Sheets Sync Configuration -->
+  <div id="settingsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-5 border border-slate-100">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2">
+          <svg class="w-6 h-6 text-emerald-600" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm4-4H6v-2h10v2zm0-4H6V7h10v2z"/></svg>
+          <h3 class="text-lg font-bold text-slate-900">הגדרות סנכרון עם Google Sheets</h3>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600 text-xl font-bold p-1">✕</button>
+      </div>
+
+      <!-- Sync Setup Instructions -->
+      <div class="space-y-4 text-xs sm:text-sm text-slate-700">
+        <p class="leading-relaxed">
+          כדי שהמשימות יישמרו אוטומטית בגיליון Google Sheets שלך ויסתנכרנו עם הנייד והמחשב:
+        </p>
+
+        <ol class="list-decimal list-inside space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
+          <li>פתחי גיליון Google Sheets חדש בחשבון הגוגל שלך.</li>
+          <li>בתפריט לחצי על <strong>הרחבות (Extensions) &larr; Apps Script</strong>.</li>
+          <li>הדביקי את הקוד המוכן מראש (לחצי על הכפתור מטה להעתקה) ושמרי.</li>
+          <li>לחצי על <strong>פריסה (Deploy) &larr; פריסה חדשה (New deployment) &larr; אפליקציית אינטרנט (Web app)</strong>.</li>
+          <li>בחרי: <em>גישה: לכל אחד (Anyone)</em> ולחצי על <strong>פרוס (Deploy)</strong>.</li>
+          <li>העתיקי את כתובת ה-Web App URL והדביקי כאן:</li>
+        </ol>
+
+        <!-- Web App URL Input -->
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-1">כתובת Web App URL מ-Google Apps Script:</label>
+          <input 
+            type="url" 
+            id="sheetsApiUrlInput" 
+            placeholder="https://script.google.com/macros/s/AKfycb.../exec" 
+            class="w-full rounded-xl border border-slate-300 p-2.5 text-xs font-mono focus:ring-2 focus:ring-brand-500 outline-none text-left"
+            dir="ltr"
+          >
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="testSyncBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span>בדוק חיבור וסנכרן עכשיו</span>
+          </button>
+          <button id="copyScriptBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold px-4 py-2 rounded-xl text-xs transition border border-slate-300">
+            העתק קוד Apps Script
+          </button>
+        </div>
+
+        <div id="syncTestResult" class="hidden text-xs p-2.5 rounded-lg"></div>
+
+        <!-- Local Data Management -->
+        <div class="border-t pt-3 mt-4 space-y-2">
+          <h4 class="font-bold text-xs text-slate-800">גיבוי ושחזור מקומי:</h4>
+          <div class="flex items-center gap-2">
+            <button id="downloadBackupBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg text-xs border border-slate-300">
+              הורד קובץ גיבוי (JSON)
+            </button>
+            <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg text-xs border border-slate-300 cursor-pointer">
+              שחזר מגיבוי (JSON)
+              <input type="file" id="importBackupInput" accept=".json" class="hidden">
+            </label>
+            <button id="resetDemoTasksBtn" class="bg-red-50 hover:bg-red-100 text-red-700 font-medium px-3 py-1.5 rounded-lg text-xs border border-red-200 mr-auto">
+              איפוס למשימות הדגמה
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t">
+        <button type="button" class="modal-close-btn px-4 py-2 text-slate-600 text-sm font-semibold hover:bg-slate-100 rounded-xl transition">סגור</button>
+        <button id="saveSettingsBtn" class="bg-brand-900 hover:bg-brand-950 text-white font-bold px-5 py-2 text-sm rounded-xl shadow transition">שמור הגדרות</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Notification Popup -->
+  <div id="toast" class="fixed bottom-5 left-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg text-sm flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none translate-y-3">
+    <span id="toastIcon"></span>
+    <span id="toastMsg"></span>
+  </div>
+
+  <!-- Main JavaScript App Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
